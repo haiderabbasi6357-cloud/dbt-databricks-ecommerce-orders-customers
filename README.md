@@ -1,4 +1,4 @@
-# ShopFlow Analytics: dbt + Databricks
+<img width="1900" height="1580" alt="image" src="https://github.com/user-attachments/assets/9051d445-3f87-45c7-88ce-decc956e0070" /># ShopFlow Analytics: dbt + Databricks
 End-to-end sales analytics on orders and customers using dbt and Databricks: staging, intermediate and mart layers, with tests, documentation and SQL analysis on top.
 
 ## 1. Project Overview
@@ -39,23 +39,10 @@ raw_order_items.product_id → raw_products.product_id
 
 ## 4. Architecture
 
-Data Ingested from DataBricks
-      │
-      ▼
- STAGING          one model per source table: rename, cast, clean
-      stg_products, stg_orders, stg_order_items
-      │
-      ▼
- INTERMEDIATE     joins and business logic, not exposed to end users
- int_order_items_enriched, int_orders_summary, int_customer_orders
-      │
-      ▼
- MARTS            analysis-ready dimensions and facts
- dim_customers, dim_products, fct_orders, fct_order_items
-      │
-      ▼
- ANALYSIS         SQL queries / dashboards
-6. Project structure
+<img width="1900" height="1580" alt="image" src="https://github.com/user-attachments/assets/1a47aeef-c3e9-4d07-a48e-5dacaaec8eb9" />
+
+
+## 5. Project structure
 shopflow_analytics/
 ├── dbt_project.yml
 ├── packages.yml
@@ -93,7 +80,7 @@ shopflow_analytics/
         └── assert_quantity_positive.sql
           
 
-## 7. Model layers
+## 6. Model layers
 Staging (models/staging)
 
 Light-touch cleaning only, one model per source, materialised as views.
@@ -121,7 +108,7 @@ dim_products	Dimension	Product name, category and list price
 fct_orders	Fact	One row per order with status, total and item count
 fct_order_items	Fact	One row per order line with product, quantity, price and line total
 
-##7. Data quality tests
+## 7. Data quality tests
 
 Defined in the _*.yml files and in tests/.
 
@@ -205,7 +192,7 @@ limit 10;
 
 Revenue by country
 
-sql
+--sql
 select
     c.country,
     count(distinct o.order_id)  as orders,
