@@ -1,4 +1,4 @@
-<img width="1900" height="1580" alt="image" src="https://github.com/user-attachments/assets/9051d445-3f87-45c7-88ce-decc956e0070" /># ShopFlow Analytics: dbt + Databricks
+# ShopFlow Analytics: dbt + Databricks
 End-to-end sales analytics on orders and customers using dbt and Databricks: staging, intermediate and mart layers, with tests, documentation and SQL analysis on top.
 
 ## 1. Project Overview
