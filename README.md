@@ -1,7 +1,7 @@
 # ShopFlow Analytics: dbt + Databricks
 End-to-end sales analytics on orders and customers using dbt and Databricks: staging, intermediate and mart layers, with tests, documentation and SQL analysis on top.
 
-##1. Project overview
+## 1. Project overview
 
 ShopFlow is a sample e-commerce dataset (customers, products, orders and order items). This project turns the raw CSV files into clean, tested, analysis-ready tables using the layered approach recommended by dbt, then answers business questions about sales, products and customers.
 
