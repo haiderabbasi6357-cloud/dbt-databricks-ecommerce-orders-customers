@@ -1,0 +1,7 @@
+version: 2
+
+models:
+  - name: int_orders_enriched
+    description: "Combining Orders and Customers table to get clear view"
+  - name: int_order_items_with_product
+    description: "Combining Orders and product table to get clear insight of the products data."
