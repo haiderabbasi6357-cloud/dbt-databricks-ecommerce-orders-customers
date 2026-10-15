@@ -1,0 +1,6 @@
+-- Not adding future date in data
+select
+    order_id,
+    order_date
+from {{ ref('fct_orders') }}
+where order_date > current_date()
