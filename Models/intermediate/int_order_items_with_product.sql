@@ -12,7 +12,7 @@ orders as (
     from {{ ref('stg_orders') }}
 ),
 
-combine as (
+joined as (
     select
         order_items.order_item_id,
         order_items.order_id,
@@ -31,4 +31,4 @@ combine as (
     left join orders on order_items.order_id = orders.order_id
 )
 
-select * from combine
+select * from joined
