@@ -1,0 +1,18 @@
+--2nd File
+with main AS (
+select * FROM  {{ref('raw_orders')}}
+
+),
+
+rename as (
+
+    select 
+    order_id,
+    customer_id,
+    cast(order_date as date) as order_date,
+    lower(trim(status)) as status,
+    cast(total_amount as decimal(12,2)) as total_amount 
+    from main
+)
+
+select * from rename
