@@ -1,2 +1,0 @@
-## Data ingestion
-Raw data was originally ingested into Azure Data Lake Storage (ADLS) and loaded into Databricks. For reproducibility, copies of the four raw CSV files are included in the seeds/ folder, so anyone can run the project with dbt seed without needing access to my ADLS account. In a production setup, these tables would be defined as dbt sources pointing at the ingested tables rather than as seeds.
