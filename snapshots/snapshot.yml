@@ -1,0 +1,16 @@
+version: 2
+
+snapshots:
+  - name: scd_customers
+    description: "Type 2 SCD tracks customer history and only increments when the dbt_updated_at is null "
+    columns:
+      - name: customer_id
+        description: "Business key"
+      - name: dbt_valid_from
+        description: "Version of the row became valid"
+      - name: dbt_valid_to
+        description: "CURRENT_ROW IS NULL"
+      - name: dbt_scd_id
+        description: "Unique key for the snapshot row"
+      - name: dbt_updated_at
+        description: "When the snapshot run last updated this row"
