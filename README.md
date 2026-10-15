@@ -43,42 +43,9 @@ raw_order_items.product_id → raw_products.product_id
 
 
 ## 5. Project structure
-shopflow_analytics/
-├── dbt_project.yml
-├── packages.yml
-├── seeds/
-│   ├── raw_customers.csv
-│   ├── raw_products.csv
-│   ├── raw_orders.csv
-│   └── raw_order_items.csv
-├── models/
-│   ├── staging/
-│   │   ├── stg_products.sql
-│   │   ├── stg_orders.sql
-│   │   ├── stg_order_items.sql
-│   │   └── staging_models.yml
-│   ├── intermediate/
-│   │   ├── int_order_items_with_productsql
-│   │   ├── int_orders_enriched.sql
-│   │   └── _intermediate_models.yml
-│   └── marts/
-│       ├── dim_products.sql
-│       ├── fct_orders.sql
-│       ├── fct_order_items.sql
-│       └── _marts.core.yml
-├── analyses (Databricks)
-│   ├── monthly_sales.sql
-│   ├── top_products.sql
-│   ├── sales_by_country.sql
-│   ├── repeat_customers.sql
-│   └── order_status_mix.sql
-└── tests/
-    └── assert_customer_has_valid_email.sql
-      └── assert_fct_orders_revenue_non_negative.sql
-       └── assert_no_future_order_dates.sql
-        └── assert_product_price_positive.sql
-        └── assert_quantity_positive.sql
-          
+
+<img width="1828" height="1950" alt="image" src="https://github.com/user-attachments/assets/fc963e0f-3186-404b-8d1c-c83da4a33ab3" />
+
 
 ## 6. Model layers
 Staging (models/staging)
