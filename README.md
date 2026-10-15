@@ -1,53 +1,49 @@
 # ShopFlow Analytics: dbt + Databricks
 End-to-end sales analytics on orders and customers using dbt and Databricks: staging, intermediate and mart layers, with tests, documentation and SQL analysis on top.
 
-## 1. Project overview
+## 1. Project Overview
 
 ShopFlow is a sample e-commerce dataset (customers, products, orders and order items). This project turns the raw CSV files into clean, tested, analysis-ready tables using the layered approach recommended by dbt, then answers business questions about sales, products and customers.
 
-Business questions answered
+# Business questions answered
 
 How do sales and order volumes change month by month?
 Which products and categories generate the most revenue?
 Which countries and customers contribute the most?
 How many customers are repeat buyers?
 What share of orders is delivered, shipped or still processing?
-2. Tech stack
+
+## 2. Tech stack
 Tool	Purpose
 dbt (dbt-databricks adapter)	Transformations, testing, documentation, lineage
 Databricks (SQL Warehouse / Unity Catalog)	Compute and storage
 SQL	Modelling and analysis
 Git / GitHub	Version control
-3. Source data
+
+## 3. Source data
 
 Four raw CSV files are loaded as dbt seeds (seeds/ folder).
 
-File	Grain	Primary key	Rows
-raw_customers.csv	one row per customer	customer_id	8,010
-raw_products.csv	one row per product	product_id	7,010
-raw_orders.csv	one row per order	order_id	12,020
-raw_order_items.csv	one row per product line in an order	order_item_id	5,030
+####  Files name 
+raw_customers.csv	- ROWS(8,010)
+raw_products.csv - ROWS(7,010)
+raw_orders.csv - ROWS(12,020)
+raw_order_items.csv - ROWS(5,030)
 
-Relationships
+## Relationships
 
 raw_orders.customer_id → raw_customers.customer_id
 raw_order_items.order_id → raw_orders.order_id
 raw_order_items.product_id → raw_products.product_id
 
-The first 10 / 10 / 20 / 30 rows in each file are the original sample data. The remaining rows were generated to match the same schema, keys and patterns. Order dates run from 2024-06-01 to 2024-12-31.
 
-Known raw data quirks (handled in staging)
+## 4. Architecture
 
-Inconsistent casing in some names and emails (for example johnson, IVY.t@email.com).
-Some unit_price values differ from the product list price (discounts or price changes).
-Only part of the orders have matching rows in raw_order_items, so some orders have no item detail.
-At least one original order total does not equal the sum of its items (ord_007).
-4. Architecture
-seeds (raw CSV)
+Data Ingested from DataBricks
       │
       ▼
  STAGING          one model per source table: rename, cast, clean
- stg_customers, stg_products, stg_orders, stg_order_items
+      stg_products, stg_orders, stg_order_items
       │
       ▼
  INTERMEDIATE     joins and business logic, not exposed to end users
@@ -59,7 +55,7 @@ seeds (raw CSV)
       │
       ▼
  ANALYSIS         SQL queries / dashboards
-5. Project structure
+6. Project structure
 shopflow_analytics/
 ├── dbt_project.yml
 ├── packages.yml
@@ -70,49 +66,52 @@ shopflow_analytics/
 │   └── raw_order_items.csv
 ├── models/
 │   ├── staging/
-│   │   ├── stg_customers.sql
 │   │   ├── stg_products.sql
 │   │   ├── stg_orders.sql
 │   │   ├── stg_order_items.sql
-│   │   └── _staging.yml
+│   │   └── staging_models.yml
 │   ├── intermediate/
-│   │   ├── int_order_items_enriched.sql
-│   │   ├── int_orders_summary.sql
-│   │   ├── int_customer_orders.sql
-│   │   └── _intermediate.yml
+│   │   ├── int_order_items_with_productsql
+│   │   ├── int_orders_enriched.sql
+│   │   └── _intermediate_models.yml
 │   └── marts/
-│       ├── dim_customers.sql
 │       ├── dim_products.sql
 │       ├── fct_orders.sql
 │       ├── fct_order_items.sql
-│       └── _marts.yml
-├── analyses/
+│       └── _marts.core.yml
+├── analyses (Databricks)
 │   ├── monthly_sales.sql
 │   ├── top_products.sql
 │   ├── sales_by_country.sql
 │   ├── repeat_customers.sql
 │   └── order_status_mix.sql
 └── tests/
-    └── assert_order_total_matches_items.sql
-6. Model layers
-6.1 Staging (models/staging)
+    └── assert_customer_has_valid_email.sql
+      └── assert_fct_orders_revenue_non_negative.sql
+       └── assert_no_future_order_dates.sql
+        └── assert_product_price_positive.sql
+        └── assert_quantity_positive.sql
+          
+
+## 7. Model layers
+Staging (models/staging)
 
 Light-touch cleaning only, one model per source, materialised as views.
 
 Model	What it does
-stg_customers	Standardises names (initcap), lower-cases email, casts created_at to timestamp
+
 stg_products	Trims text, casts price to decimal
 stg_orders	Casts order_date to date, standardises status to lower case
 stg_order_items	Casts quantity and price, adds line_total = quantity * unit_price
-6.2 Intermediate (models/intermediate)
+
+### Intermediate (models/intermediate)
 
 Joins and calculations reused by several marts.
 
 Model	What it does
-int_order_items_enriched	Order items joined to orders and products (date, status, category, customer)
-int_orders_summary	One row per order with item count, units and calculated item total
-int_customer_orders	One row per customer with first order date, last order date, order count and total spend
-6.3 Marts (models/marts)
+int_order_items_with_products	Order items joined to orders and products (date, status, category, customer)
+int_orders_enriched One row per order with item count, units and calculated item total
+int_customer_orders One row per customer with first order date, last order date, order count and total spend
 
 Business-facing tables, materialised as tables (schema: gold).
 
@@ -121,7 +120,8 @@ dim_customers	Dimension	Customer attributes plus lifetime metrics (orders, spend
 dim_products	Dimension	Product name, category and list price
 fct_orders	Fact	One row per order with status, total and item count
 fct_order_items	Fact	One row per order line with product, quantity, price and line total
-7. Data quality tests
+
+##7. Data quality tests
 
 Defined in the _*.yml files and in tests/.
 
@@ -130,8 +130,9 @@ relationships between orders and customers, items and orders, items and products
 accepted_values for status (delivered, shipped, processing) and country (US, UK, CA, DE).
 Custom test: order total_amount should match the sum of its item line totals. Orders with no items are excluded, and known source mismatches are set to warn severity.
 bash
+
 dbt test
-8. How to run
+## 8. How to run
 
 Prerequisites: Python 3.9+, a Databricks workspace with a SQL Warehouse, and a personal access token.
 
@@ -170,7 +171,8 @@ shopflow_analytics:
       catalog: main
       schema: gold
       threads: 4
-9. Analysis
+      
+# Business Analysis in DataBricks using SQL
 
 Queries live in analyses/ and run in the Databricks SQL editor. They are written in Databricks SQL (for example, date_format for month names).
 
@@ -242,21 +244,19 @@ Revenue peaked in [month] at [value].
 [x%] of customers placed more than one order.
 [Country] is the largest market by revenue.
 
-Add screenshots below:
 
-Lineage graph	Monthly sales chart
-docs/lineage.png	docs/monthly_sales.png
-11. Notes and limitations
+#  Notes and limitations
 Data is sample data and partly synthetic; results illustrate the method, not a real business.
 Only a subset of orders has item-level rows, so item-based revenue and order-level revenue can differ.
 Raw quirks are intentionally kept so the staging layer and tests have real cleaning work to do.
-12. Next steps
+
+# Next steps
 Add incremental models for large fact tables.
 Add source freshness checks and a scheduled Databricks Workflow job.
 Build a Power BI dashboard on the gold tables.
 Add CI to run dbt build on pull requests.
 
-#13. Author
+# Author
 
 Haider Ali Khan: data professional with a background in telecom and an MSc in Management with Data Analytics
 
