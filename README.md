@@ -1,2 +1,2 @@
-# dbt-databricks-ecommerce-orders-customers
-End-to-end sales analytics on orders and customers using dbt and Databricks: staging, gold models, tests and docs.
+# ShopFlow Analytics: dbt + Databricks
+End-to-end sales analytics on orders and customers using dbt and Databricks: staging, intermediate and mart layers, with tests, documentation and SQL analysis on top.
